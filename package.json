@@ -39,5 +39,8 @@
         "*.{json,md,html,css,scss}": [
             "prettier --write"
         ]
+    },
+    "dependencies": {
+        "dotenv": "17.2.3"
     }
 }
