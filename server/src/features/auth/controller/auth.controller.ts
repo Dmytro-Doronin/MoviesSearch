@@ -1,3 +1,5 @@
+import type { Response, Request as ExpressRequest } from 'express';
+
 import {
     Body,
     Controller,
@@ -7,9 +9,10 @@ import {
     UseGuards,
     ValidationPipe,
     Request,
+    UnauthorizedException,
 } from '@nestjs/common';
-import { Response } from 'express';
 
+import { UserType } from '../../user/types/user.type';
 import { LocalAuthGuard } from '../guards/local-auth.guards';
 import { AuthInputDto } from '../models/auth-input.dto';
 import { AuthService } from '../service/auth.service';
@@ -30,8 +33,14 @@ export class AuthController {
 
     @UseGuards(LocalAuthGuard)
     @Post('/login')
-    async login(@Request() req, @Res() res: Response) {
-        const { accessToken, refreshToken } = await this.authService.login(req.user);
+    async login(@Request() req: ExpressRequest, @Res({ passthrough: true }) res: Response) {
+        const user = req.user as UserType | undefined;
+
+        if (!user) {
+            throw new UnauthorizedException('User payload missing');
+        }
+
+        const { accessToken, refreshToken } = await this.authService.login(user);
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
@@ -39,6 +48,6 @@ export class AuthController {
             sameSite: 'none',
         });
 
-        res.status(200).json({ accessToken });
+        return { accessToken };
     }
 }

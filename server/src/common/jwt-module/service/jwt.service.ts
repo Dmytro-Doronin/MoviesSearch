@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
 import { UserType } from '../../../features/user/types/user.type';
 
@@ -8,7 +8,7 @@ import { UserType } from '../../../features/user/types/user.type';
 export class CustomJwtService {
     constructor(private jwtService: JwtService) {}
 
-    async createJWT(user: UserType, deviceId: string = uuidv4()) {
+    async createJWT(user: UserType, deviceId: string = randomUUID()) {
         const payloadBase = {
             sub: user.id,
             deviceId,

@@ -5,15 +5,15 @@ import {
     ValidatorConstraintInterface,
 } from 'class-validator';
 
-import { UserQueryRepository } from '../../features/user/repositories/user-query.repository';
+import { UserQueryRepository } from '../../features/user/repositories/userQuery.repository';
 
 //registration in IoC
 @ValidatorConstraint({ async: true })
 export class IsUserAlreadyExistConstraint implements ValidatorConstraintInterface {
     constructor(private userQueryRepository: UserQueryRepository) {}
 
-    async validate(userName: string) {
-        const userEmail = await this.userQueryRepository.getUserByLogin(userName);
+    async validate(email: string) {
+        const userEmail = await this.userQueryRepository.findByEmail(email);
 
         return !userEmail;
     }

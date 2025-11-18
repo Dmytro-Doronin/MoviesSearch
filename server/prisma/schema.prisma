@@ -8,28 +8,28 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  login     String
-  email     String   @unique
+  id           String          @id @default(cuid())
+  login        String
+  email        String          @unique
   passwordHash String
   passwordSalt String
   imageUrl     String?
-  role      String   @default("user")
-  tokens    RefreshToken[]
-  wishlist  WishlistMovie[]
-  createdAt DateTime @default(now())
+  role         String          @default("user")
+  tokens       RefreshToken[]
+  wishlist     WishlistMovie[]
+  createdAt    DateTime        @default(now())
 }
 
 model RefreshToken {
   id        String   @id @default(cuid())
   token     String   @unique
-  userId    String
+  userId    String   @unique
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
 
 model Movie {
-  id        String   @id @default(cuid())
+  id        String          @id @default(cuid())
   title     String
   year      Int
   posterUrl String?
@@ -37,12 +37,12 @@ model Movie {
 }
 
 model WishlistMovie {
-  id        String   @id @default(cuid())
-  userId    String
-  movieId   String
-  order     Int
-  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  movie     Movie  @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  id      String @id @default(cuid())
+  userId  String
+  movieId String
+  order   Int
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movie   Movie  @relation(fields: [movieId], references: [id], onDelete: Cascade)
 
   @@unique([userId, movieId])
   @@index([userId, order])

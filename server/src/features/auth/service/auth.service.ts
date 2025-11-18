@@ -6,6 +6,7 @@ import { CreateUserDto } from '../../user/models/create-user.dto';
 import { UserQueryRepository } from '../../user/repositories/userQuery.repository';
 import { UserService } from '../../user/service/user.service';
 import { UserType } from '../../user/types/user.type';
+import { TokenService } from './token.service';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,7 @@ export class AuthService {
         private userService: UserService,
         private userQueryRepository: UserQueryRepository,
         private jwtService: CustomJwtService,
-        private readonly tokenService: TokenService,
+        private tokenService: TokenService,
     ) {}
 
     async registration({ login, password, email }: CreateUserDto) {
@@ -33,8 +34,8 @@ export class AuthService {
         return { accessToken, refreshToken };
     }
 
-    async validateUser(login: string, password: string) {
-        const user = await this.userQueryRepository.findByEmail(login);
+    async validateUser(email: string, password: string) {
+        const user = await this.userQueryRepository.findByEmail(email);
         if (!user) {
             return null;
         }
