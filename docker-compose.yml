@@ -1,0 +1,63 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: movies_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: movies_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: movies_api
+    restart: unless-stopped
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+    env_file:
+      - ./server/.env.docker
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    command: npm run start:dev
+
+#  client:
+#    build:
+#      context: ./client
+#      dockerfile: Dockerfile
+#    container_name: movies_client
+#    restart: unless-stopped
+#    volumes:
+#      - ./client:/usr/src/app
+#      - /usr/src/app/node_modules
+#    env_file:
+#      - ./client/.env.local.docker
+#    ports:
+#      - "3001:3000"
+#    depends_on:
+#      - api
+
+volumes:
+  pg_data:

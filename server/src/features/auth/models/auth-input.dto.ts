@@ -1,4 +1,4 @@
-import { IsEmail, IsString, Length } from 'class-validator';
+import { IsEmail, IsString, Length, MinLength } from 'class-validator';
 
 import { Trim } from '../../../common/decorators/trim';
 import { IsUserAlreadyExist } from '../../../common/validator/validation-login-password.validator';
@@ -25,4 +25,13 @@ export class AuthInputDto {
         message: 'Email already exists. Choose another email.',
     })
     readonly email: string;
+}
+
+export class LoginDto {
+    @IsEmail()
+    email: string;
+
+    @IsString()
+    @MinLength(6)
+    password: string;
 }

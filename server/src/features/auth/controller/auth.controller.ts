@@ -14,7 +14,7 @@ import {
 
 import { UserType } from '../../user/types/user.type';
 import { LocalAuthGuard } from '../guards/local-auth.guards';
-import { AuthInputDto } from '../models/auth-input.dto';
+import { AuthInputDto, LoginDto } from '../models/auth-input.dto';
 import { AuthService } from '../service/auth.service';
 
 @Controller('/auth')
@@ -33,7 +33,11 @@ export class AuthController {
 
     @UseGuards(LocalAuthGuard)
     @Post('/login')
-    async login(@Request() req: ExpressRequest, @Res({ passthrough: true }) res: Response) {
+    async login(
+        @Body() _dto: LoginDto,
+        @Request() req: ExpressRequest,
+        @Res({ passthrough: true }) res: Response,
+    ) {
         const user = req.user as UserType | undefined;
 
         if (!user) {

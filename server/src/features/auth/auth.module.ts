@@ -17,17 +17,10 @@ import { LocalStrategy } from './strategies/local.strategy';
         LocalStrategy,
         LocalAuthGuard,
         AuthService,
-        IsUserAlreadyExistConstraint,
         TokenRepository,
         TokenService,
-    ],
-    exports: [
-        LocalStrategy,
-        LocalAuthGuard,
-        AuthService,
         IsUserAlreadyExistConstraint,
-        TokenRepository,
-        TokenService,
     ],
+    exports: [LocalStrategy, LocalAuthGuard, AuthService, TokenRepository, TokenService],
 })
 export class AuthModule {}
