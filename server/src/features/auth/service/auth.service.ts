@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 
 import { CustomJwtService } from '../../../common/jwt-module/service/jwt.service';
@@ -31,6 +31,28 @@ export class AuthService {
     async login(user: UserType) {
         const { accessToken, refreshToken } = await this.createJWT(user);
         await this.tokenService.saveRefreshToken(user.id, refreshToken);
+        return { accessToken, refreshToken };
+    }
+
+    async logout(userId: string) {
+        await this.tokenService.deleteRefreshToken(userId);
+    }
+
+    async refresh(userId: string, token: string) {
+        const isValid = await this.tokenService.validateRefreshToken(userId, token);
+
+        if (!isValid) {
+            throw new UnauthorizedException();
+        }
+
+        const user = await this.userQueryRepository.findById(userId);
+
+        if (!user) {
+            throw new UnauthorizedException();
+        }
+
+        const { accessToken, refreshToken } = await this.createJWT(user);
+        await this.tokenService.saveRefreshToken(userId, refreshToken);
         return { accessToken, refreshToken };
     }
 

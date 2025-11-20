@@ -1,4 +1,4 @@
-import type { Response, Request as ExpressRequest } from 'express';
+import type { Response } from 'express';
 
 import {
     Body,
@@ -12,8 +12,12 @@ import {
     UnauthorizedException,
 } from '@nestjs/common';
 
+import type { AccessUserPayload, LocalUserPayload, RefreshUserPayload } from '../types/auth.types';
+
+import { VerifyRefreshTokenGuard } from '../../../common/jwt-module/guards/verify-token.guard';
 import { UserType } from '../../user/types/user.type';
-import { LocalAuthGuard } from '../guards/local-auth.guards';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { AuthInputDto, LoginDto } from '../models/auth-input.dto';
 import { AuthService } from '../service/auth.service';
 
@@ -35,7 +39,7 @@ export class AuthController {
     @Post('/login')
     async login(
         @Body() _dto: LoginDto,
-        @Request() req: ExpressRequest,
+        @Request() req: LocalUserPayload,
         @Res({ passthrough: true }) res: Response,
     ) {
         const user = req.user as UserType | undefined;
@@ -53,5 +57,33 @@ export class AuthController {
         });
 
         return { accessToken };
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('/logout')
+    async logout(@Request() req: AccessUserPayload, @Res() res: Response) {
+        await this.authService.logout(req.user.userId);
+        res.clearCookie('refreshToken');
+        res.sendStatus(204);
+    }
+
+    @UseGuards(VerifyRefreshTokenGuard)
+    @Post('/refresh-token')
+    async refresh(@Request() req: RefreshUserPayload, @Res() res: Response) {
+        const refreshToken = req.user.refreshToken;
+        const userId = req.user.id;
+
+        const { accessToken, refreshToken: newToken } = await this.authService.refresh(
+            userId,
+            refreshToken,
+        );
+
+        res.cookie('refreshToken', newToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+        });
+
+        res.status(200).json({ accessToken });
     }
 }
