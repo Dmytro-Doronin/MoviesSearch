@@ -10,11 +10,14 @@ import {
     ValidationPipe,
     Request,
     UnauthorizedException,
+    NotFoundException,
+    Get,
 } from '@nestjs/common';
 
 import type { AccessUserPayload, LocalUserPayload, RefreshUserPayload } from '../types/auth.types';
 
 import { VerifyRefreshTokenGuard } from '../../../common/jwt-module/guards/verify-token.guard';
+import { UserQueryRepository } from '../../user/repositories/userQuery.repository';
 import { UserType } from '../../user/types/user.type';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
@@ -23,7 +26,10 @@ import { AuthService } from '../service/auth.service';
 
 @Controller('/auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+    constructor(
+        private authService: AuthService,
+        private userQueryRepository: UserQueryRepository,
+    ) {}
 
     @HttpCode(204)
     @Post('/registration')
@@ -85,5 +91,22 @@ export class AuthController {
         });
 
         res.status(200).json({ accessToken });
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/me')
+    async me(@Request() req: AccessUserPayload) {
+        const userId = req.user.userId;
+        const user = await this.userQueryRepository.findById(userId);
+        if (!user) {
+            throw new NotFoundException('User was not found');
+        }
+
+        return {
+            id: userId,
+            email: user.email,
+            login: user.login,
+            imageUrl: user.imageUrl,
+        };
     }
 }
