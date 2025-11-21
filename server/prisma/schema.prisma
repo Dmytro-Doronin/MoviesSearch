@@ -15,17 +15,17 @@ model User {
   passwordSalt String
   imageUrl     String?
   role         String          @default("user")
-  tokens       RefreshToken[]
-  wishlist     WishlistMovie[]
   createdAt    DateTime        @default(now())
+  tokens       RefreshToken?
+  wishlist     WishlistMovie[]
 }
 
 model RefreshToken {
   id        String   @id @default(cuid())
   token     String   @unique
   userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Movie {
@@ -41,8 +41,8 @@ model WishlistMovie {
   userId  String
   movieId String
   order   Int
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   movie   Movie  @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, movieId])
   @@index([userId, order])
