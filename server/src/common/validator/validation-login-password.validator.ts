@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import {
     registerDecorator,
     ValidationOptions,
@@ -7,7 +8,7 @@ import {
 
 import { UserQueryRepository } from '../../features/user/repositories/userQuery.repository';
 
-//registration in IoC
+@Injectable()
 @ValidatorConstraint({ async: true })
 export class IsUserAlreadyExistConstraint implements ValidatorConstraintInterface {
     constructor(private userQueryRepository: UserQueryRepository) {}

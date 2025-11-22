@@ -41,6 +41,7 @@ export class AuthController {
         });
     }
 
+    @HttpCode(200)
     @UseGuards(LocalAuthGuard)
     @Post('/login')
     async login(
