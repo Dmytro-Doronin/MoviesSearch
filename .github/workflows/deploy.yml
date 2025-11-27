@@ -1,14 +1,14 @@
-name: CI & Deploy to Render
+name: CI/CD Pipeline (MoviesSearch)
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch: {} # запуск руками из Actions
+  workflow_dispatch: {}
 
 jobs:
   ci:
-    name: Build & Test
+    name: CI — Lint, Tests, Build
     runs-on: ubuntu-latest
 
     steps:
@@ -20,21 +20,14 @@ jobs:
         with:
           node-version: '22.16.0'
 
-      - name: Cache npm
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('server/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      - name: Install root dependencies
+        run: npm ci
 
-      - name: Install dependencies (server)
+      - name: Install server dependencies
         working-directory: server
         run: npm ci
 
-      - name: Lint
-        working-directory: server
+      - name: Lint (monorepo)
         run: npm run lint
 
       - name: Run unit tests
@@ -49,14 +42,13 @@ jobs:
         working-directory: server
         run: npm run build
 
-  deploy:
-    name: Deploy to Render
+  cd:
+    name: CD — Deploy to Render
     runs-on: ubuntu-latest
     needs: ci
 
     steps:
       - name: Trigger Render Deploy Hook
-        run: |
-          curl -X POST "$RENDER_DEPLOY_HOOK"
+        run: curl -X POST "$RENDER_DEPLOY_HOOK"
         env:
           RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
