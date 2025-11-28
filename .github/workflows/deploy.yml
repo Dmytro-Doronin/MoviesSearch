@@ -34,6 +34,16 @@ jobs:
         working-directory: server
         run: npm test
 
+      - name: Run Prisma migrations on test DB
+        working-directory: server
+        env:
+          DATABASE_URL: ${{ secrets.E2E_DATABASE_URL }}
+        run: npx prisma migrate deploy
+
+      - name: Create .env.test for e2e
+        working-directory: server
+        run: echo "DATABASE_URL=${{ secrets.E2E_DATABASE_URL }}" > .env.test
+
       - name: Run e2e tests
         working-directory: server
         run: npm run test:e2e
