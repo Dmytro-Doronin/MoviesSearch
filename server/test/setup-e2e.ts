@@ -14,10 +14,12 @@ if (!process.env.DATABASE_URL) {
 const prisma = new PrismaClient();
 
 beforeEach(async () => {
-    await prisma.$executeRawUnsafe(`TRUNCATE TABLE "User" CASCADE`);
+    await prisma.$executeRawUnsafe(`TRUNCATE TABLE "WishlistItem" CASCADE`);
     await prisma.$executeRawUnsafe(`TRUNCATE TABLE "RefreshToken" CASCADE`);
-    await prisma.$executeRawUnsafe(`TRUNCATE TABLE "WishlistMovie" CASCADE`);
     await prisma.$executeRawUnsafe(`TRUNCATE TABLE "Movie" CASCADE`);
+    await prisma.$executeRawUnsafe(`TRUNCATE TABLE "TvShow" CASCADE`);
+
+    await prisma.$executeRawUnsafe(`TRUNCATE TABLE "User" CASCADE`);
 });
 
 afterAll(async () => {
