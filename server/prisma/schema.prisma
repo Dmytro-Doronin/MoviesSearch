@@ -7,17 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum MediaType {
+  MOVIE
+  TV
+}
+
 model User {
-  id           String          @id @default(cuid())
+  id           String         @id @default(cuid())
   login        String
-  email        String          @unique
+  email        String         @unique
   passwordHash String
   passwordSalt String
   imageUrl     String?
-  role         String          @default("user")
-  createdAt    DateTime        @default(now())
+  role         String         @default("user")
+  createdAt    DateTime       @default(now())
+
   tokens       RefreshToken?
-  wishlist     WishlistMovie[]
+  wishlist     WishlistItem[]
 }
 
 model RefreshToken {
@@ -25,25 +31,55 @@ model RefreshToken {
   token     String   @unique
   userId    String   @unique
   createdAt DateTime @default(now())
+
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Movie {
-  id        String          @id @default(cuid())
-  title     String
-  year      Int
-  posterUrl String?
-  wishlist  WishlistMovie[]
+  id             Int      @id
+
+  title          String
+  overview       String
+
+  releaseDate    DateTime? @map("release_date")
+
+  posterPath     String?   @map("poster_path")
+  backdropPath   String?   @map("backdrop_path")
+
+  popularity     Float
+  voteAverage    Float     @map("vote_average")
+  voteCount      Int       @map("vote_count")
 }
 
-model WishlistMovie {
-  id      String @id @default(cuid())
-  userId  String
-  movieId String
-  order   Int
-  movie   Movie  @relation(fields: [movieId], references: [id], onDelete: Cascade)
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+model TvShow {
+  id               Int      @id
 
-  @@unique([userId, movieId])
+  name             String
+  originalName     String
+  overview         String
+
+  firstAirDate     DateTime? @map("first_air_date")
+
+  posterPath       String?   @map("poster_path")
+  backdropPath     String?   @map("backdrop_path")
+
+  originalLanguage String
+  popularity       Float
+  voteAverage      Float     @map("vote_average")
+  voteCount        Int       @map("vote_count")
+}
+
+model WishlistItem {
+  id        String     @id @default(cuid())
+  userId    String
+  tmdbId    Int
+  mediaType MediaType
+  order     Int
+  createdAt DateTime   @default(now())
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tmdbId, mediaType])
   @@index([userId, order])
+  @@index([tmdbId, mediaType])
 }
