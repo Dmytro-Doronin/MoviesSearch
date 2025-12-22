@@ -1,0 +1,73 @@
+:root {
+    --color-main: #121212;
+    //--color-main: #2C2C2C;
+    //--color-secondary: #522546;
+    --color-secondary-card: rgba(82, 37, 70, 0.2);
+    //--color-secondary: rgba(82, 37, 70, 1);
+    --color-accent: #f7374f;
+    --color-shadow-main: 0 0 12px hsl(var(--color-primary) / 0.6);
+    --color-hover: #88304e;
+    --color-success-100: #4caf50;
+    --color-success-200: #22c55e;
+
+    --colog-gray: #9ca4ab;
+    --color-warning: #f59e0b;
+
+    --color-light-100: #ffffff;
+    --color-light-200: #bebebe;
+
+    //--heroui-primary-foreground: 0 0% 0%;
+
+    //color-scheme: dark;
+    --color-danger: 14.25 98.36% 47.84%;
+    --color-danger-hover: 14.25 38.36% 17.84%;
+    --color-background: 0 0% 3.14%;
+    --color-foreground: 0 0% 100%;
+    --color-focus: 185.27 53.85% 66.86%;
+    --color-overlay: 0 0% 100%;
+    --color-divider: 0 0% 100%;
+    --color-content1: 240 5.88% 10%;
+    --color-content1-foreground: 0 0% 100%;
+    --color-content2: 240 3.7% 15.88%;
+    --color-content2-foreground: 0 0% 100%;
+    --color-content3: 240 5.26% 26.08%;
+    --color-content3-foreground: 0 0% 100%;
+    --color-content4: 240 5.2% 33.92%;
+    --color-content4-foreground: 0 0% 100%;
+    --color-default-50: 240 3.7% 5.29%;
+    --color-default-100: 240 5.66% 10.39%;
+    --color-default-200: 240 5% 15.69%;
+    --color-default-300: 240 5.66% 20.78%;
+    --color-default-400: 240 5.26% 26.08%;
+    --color-default-500: 240 2.88% 40.78%;
+    --color-default-600: 240 1.77% 55.69%;
+    --color-default-700: 240 1.99% 70.39%;
+    --color-default-800: 240 1.33% 85.29%;
+    --color-default-900: 0 0% 100%;
+    --color-default-foreground: 0 0% 100%;
+    --color-default: 240 5.26% 26.08%;
+    --color-primary-50: 66.86 100% 6.86%;
+    --color-primary-100: 68.18 100% 12.94%;
+    --color-primary-200: 68.38 98.55% 27.06%;
+    --color-primary-300: 68.32 99.02% 40%;
+    --color-primary-400: 68.35 99.16% 53.14%;
+    --color-primary-500: 68.17 98.83% 66.47%;
+    --color-primary-600: 67.94 98.55% 72.94%;
+    --color-primary-700: 67.8 98.04% 80%;
+    --color-primary-800: 68.18 100% 87.06%;
+    --color-primary-900: 68.57 100% 93.14%;
+    --color-primary-foreground: 0 0% 0%;
+    --color-primary: 68.17 98.83% 66.47%;
+    --color-secondary-50: 185.45 55% 7.84%;
+    --color-secondary-100: 185.11 54.02% 17.06%;
+    --color-secondary-200: 185.27 53.85% 33.14%;
+    --color-secondary-300: 185.61 54.51% 50%;
+    --color-secondary-400: 185.27 53.85% 66.86%;
+    --color-secondary-500: 185.33 54.22% 83.73%;
+    --color-secondary-600: 185 54.55% 87.06%;
+    --color-secondary-700: 184.44 52.94% 90%;
+    --color-secondary-800: 186 55.56% 92.94%;
+    --color-secondary-900: 180 50% 96.86%;
+    --color-secondary-foreground: 0 0% 100%;
+    --color-secondary: 185.27 53.85% 66.86%;
+}

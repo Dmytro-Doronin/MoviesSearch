@@ -1,0 +1,9 @@
+@use 'helpers/index' as *;
+
+:root {
+    --font-family: 'Inter', sans-serif;
+    --header-height: #{rem(88)};
+
+    --transition: all 0.3s ease-in-out;
+    --container-width: #{rem(1546)};
+}
