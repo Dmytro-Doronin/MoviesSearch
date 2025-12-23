@@ -1,0 +1,24 @@
+@use '../../styles/helpers' as *;
+
+.formCard {
+    background-color: hsl(var(--color-content1) / 1);
+    padding: rem(16) rem(24);
+    min-width: rem(450);
+    border-radius: rem(35);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: rem(16);
+}
+
+.title {
+    color: hsl(var(--color-primary) / 1);
+}
+
+.close {
+    cursor: pointer;
+    font-size: rem(18);
+}

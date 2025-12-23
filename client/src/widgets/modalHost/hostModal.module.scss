@@ -1,0 +1,36 @@
+@use '../../../styles/helpers' as *;
+
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: color-mix(in oklab, hsl(var(--color-overlay) / 1) 30%, transparent);
+    backdrop-filter: blur(rem(10));
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 999999;
+}
+.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+.closed {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.contentWrap {
+    opacity: 0;
+    transform: translateY(rem(-24));
+    transition:
+        transform 0.3s ease,
+        opacity 0.3s ease;
+    will-change: transform, opacity;
+}
+.open .contentWrap {
+    opacity: 1;
+    transform: translateY(0);
+}

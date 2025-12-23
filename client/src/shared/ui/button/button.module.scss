@@ -1,0 +1,107 @@
+@use '../../../styles/helpers' as *;
+
+.button {
+    display: flex;
+    min-width: rem(40);
+    min-height: rem(40);
+    border: 0;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    vertical-align: text-top;
+    font-size: rem(14);
+    font-weight: 500;
+    padding: rem(8) rem(14);
+    border-radius: rem(40);
+    transition: var(--transition);
+    gap: rem(4);
+    //align-self: start;
+    text-align: center;
+}
+
+.fullWidth {
+    width: 100%;
+}
+
+.primary {
+    background-color: hsl(var(--color-primary) / 1);
+    color: hsl(var(--color-primary-foreground) / 1);
+    line-height: rem(25);
+    &:hover {
+        background-color: hsl(var(--color-primary-300) / 1);
+    }
+}
+
+.secondary {
+    background-color: hsl(var(--color-default) / 1);
+    color: hsl(var(--color-default-foreground) / 1);
+    line-height: rem(25);
+    &:hover {
+        background-color: hsl(var(--color-default-300) / 1);
+    }
+}
+
+.special {
+    width: rem(40);
+    height: rem(40);
+    background-color: hsl(var(--color-default) / 1);
+    color: hsl(var(--color-default-foreground) / 1);
+    line-height: rem(0);
+    align-self: start;
+    &:hover {
+        background-color: hsl(var(--color-primary) / 1);
+        color: hsl(var(--color-primary-foreground) / 1);
+    }
+}
+
+.pagination {
+    min-width: rem(40);
+    min-height: rem(40);
+    padding: rem(10);
+    background: transparent;
+    line-height: rem(0);
+    align-self: start;
+    border: rem(1) solid var(--color-secondary);
+    &:hover {
+        background: hsl(var(--color-secondary-200) / 1);
+    }
+}
+
+.link {
+    background: transparent;
+    border: none;
+    font-size: rem(14);
+    padding: 0;
+    align-self: self-start;
+    &:hover {
+        color: hsl(var(--color-secondary-200) / 1);
+    }
+}
+
+.linkAside {
+    background: transparent;
+    border: none;
+    text-decoration: none;
+    font-size: rem(14);
+    padding: 0;
+    align-self: self-start;
+    &:hover {
+        color: var(--color-hover);
+    }
+}
+
+.transparent {
+    background: transparent;
+    border: none;
+}
+
+.formTransparent {
+    background: transparent;
+    border: none;
+    color: hsl(var(--color-danger) / 1);
+
+    &:hover {
+        background: hsl(var(--color-danger-hover) / 1);
+    }
+}

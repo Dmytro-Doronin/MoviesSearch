@@ -1,0 +1,41 @@
+@use '../../styles/helpers' as *;
+
+.image {
+    border-radius: rem(10);
+    width: 100%;
+}
+
+.middle {
+    width: rem(173);
+    height: rem(238);
+}
+
+.small {
+    width: rem(107);
+    height: rem(143);
+}
+
+.horizontal {
+    width: rem(60);
+    height: rem(100);
+    object-fit: contain;
+}
+
+.vertical {
+    width: rem(300);
+    height: rem(450);
+    object-fit: contain;
+}
+
+.largeRound {
+    border-radius: 50%;
+    width: rem(100);
+    height: rem(100);
+    object-fit: contain;
+}
+
+.tiny {
+    border-radius: 50%;
+    width: rem(24);
+    height: rem(24);
+}
