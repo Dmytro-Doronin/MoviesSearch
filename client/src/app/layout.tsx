@@ -2,8 +2,11 @@ import type { Metadata } from 'next';
 
 import { ReactNode } from 'react';
 
-import styles from './layout.module.scss';
+import { HeaderWrapper } from '@/widgets/headerWrapper/HeaderWrapper';
 import '@/shared/config/styles/index.scss';
+import { ModalHost } from '@/widgets/modalHost/ModalHost';
+
+import styles from './layout.module.scss';
 
 export const metadata: Metadata = {
     title: 'Create Next App',
@@ -14,7 +17,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <html lang="en">
             <body className={styles.root}>
+                <HeaderWrapper />
                 <main className={styles.main}>{children}</main>
+                <ModalHost />
             </body>
         </html>
     );

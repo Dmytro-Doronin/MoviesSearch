@@ -1,3 +1,5 @@
+'use client';
+
 import { ComponentPropsWithoutRef, ElementType, ReactNode } from 'react';
 
 import styles from './button.module.scss';

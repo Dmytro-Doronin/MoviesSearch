@@ -1,3 +1,7 @@
-@forward 'colors';
-@forward 'boilerplate';
-@forward 'variables';
+//@forward 'colors';
+//@forward 'boilerplate';
+//@forward 'variables';
+
+@use './_variables.scss';
+@use './_boilerplate.scss';
+@use './_colors.scss';
