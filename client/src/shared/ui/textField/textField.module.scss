@@ -1,0 +1,114 @@
+@use '../../config/styles/helpers' as *;
+
+.root {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: rem(38);
+    border: rem(2) solid hsl(var(--color-default-200) / 1);
+    transition: var(--transition);
+    &:hover {
+        border: rem(2) solid hsl(var(--color-primary) / 1);
+        cursor: text;
+        .icon {
+            color: hsl(var(--color-primary) / 1);
+        }
+    }
+    &:focus-within {
+        border: rem(2) solid hsl(var(--color-primary) / 1);
+        background-color: inherit;
+        .icon {
+            color: hsl(var(--color-primary) / 1);
+        }
+    }
+}
+
+.fieldContainer {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    background-color: var(--color-secondary);
+    padding: rem(8) rem(30);
+    border-radius: rem(8);
+}
+
+.containerFocused {
+    border-color: var(--color-outline-focus);
+    outline: rem(1) solid var(--color-outline-focus);
+}
+
+.field {
+    width: 100%;
+    font-family: inherit;
+    font-size: rem(14);
+    color: var(--color-light-100);
+    padding-right: rem(10);
+    border: none;
+    outline: 0;
+    transition: var(--transition);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: inherit;
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+        box-shadow: 0 0 0 30px hsl(var(--color-content1) / 1) inset !important;
+        -webkit-text-fill-color: white;
+        border-color: rem(1) solid var(--color-light-100);
+    }
+
+    &::placeholder {
+        transition: var(--transition);
+        color: rgba(255, 255, 255, 0.5);
+        font-size: rem(14);
+    }
+
+    &.error {
+        color: hsl(var(--color-danger) / 1);
+        border-color: var(--color-accent);
+    }
+}
+
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    row-gap: rem(2);
+}
+
+.label {
+    font-size: rem(12);
+    color: hsl(var(--color-primary) / 1);
+    margin-bottom: rem(2);
+}
+
+.showPassword {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    right: 1%;
+    bottom: 50%;
+    transform: translateY(-50%);
+
+    width: rem(20);
+    height: rem(20);
+    margin-right: rem(6);
+    padding: 0;
+
+    background: transparent;
+    border: 0;
+    outline: 0;
+
+    &:focus-visible {
+        outline: var(--outline-focus);
+    }
+}
+
+.icon {
+    transition: var(--transition);
+    margin-right: rem(8);
+}

@@ -15,3 +15,10 @@ export type UserType = {
     email: string;
     imageUrl: string;
 };
+
+export type User = {
+    id: string;
+    email: string;
+    login: string;
+    imageUrl: string | null;
+};
