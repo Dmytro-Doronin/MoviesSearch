@@ -1,18 +1,30 @@
 'use server';
 
 import { cookies } from 'next/headers';
+import { z } from 'zod';
 
 import { parseCookies } from '@/helpers/parseCokieHeader';
-export type LoginActionState = {
-    error: string;
-    redirectTo: string;
-};
+
+import { loginSchema, type LoginActionState, type LoginFieldErrors } from '../schemas/loginSchema';
+
 export const loginAction = async (
     state: LoginActionState,
     formData: FormData,
 ): Promise<LoginActionState> => {
-    const email = formData.get('email')?.toString() || '';
-    const password = formData.get('password')?.toString() || '';
+    const zodResult = loginSchema.safeParse(Object.fromEntries(formData));
+
+    if (!zodResult.success) {
+        const { fieldErrors, formErrors } = z.flattenError(zodResult.error);
+
+        return {
+            error: '',
+            redirectTo: '',
+            fieldErrors: fieldErrors as LoginFieldErrors,
+            formErrors,
+        };
+    }
+
+    const { email, password } = zodResult.data;
 
     const result = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
@@ -21,7 +33,12 @@ export const loginAction = async (
     });
 
     if (result.status !== 200) {
-        return { error: 'Invalid login or password', redirectTo: '' };
+        return {
+            error: 'Invalid login or password',
+            redirectTo: '',
+            fieldErrors: {},
+            formErrors: [],
+        };
     }
 
     const cookieStore = await cookies();
@@ -35,5 +52,10 @@ export const loginAction = async (
         }
     }
 
-    return { error: '', redirectTo: '/' };
+    return {
+        error: '',
+        redirectTo: '/',
+        fieldErrors: {},
+        formErrors: [],
+    };
 };

@@ -68,10 +68,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 
         return (
             <>
-                <label
-                    className={`${styles.root} ${containerProps}`}
-                    // onClick={() => inputRef.current?.focus()}
-                >
+                <label className={`${styles.root} ${containerProps}`}>
                     <div
                         onFocus={focusedHandler}
                         onBlur={unFocusedHandler}
