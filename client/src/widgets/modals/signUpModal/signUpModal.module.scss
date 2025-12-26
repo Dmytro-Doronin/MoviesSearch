@@ -1,0 +1,29 @@
+@use '../../../shared/config/styles/helpers' as *;
+
+.modalContent {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.98);
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+    will-change: opacity, transform;
+}
+
+.enter {
+    opacity: 1;
+    transform: none;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    row-gap: rem(10);
+}
+
+.infoGroup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: rem(20);
+    gap: rem(10);
+}

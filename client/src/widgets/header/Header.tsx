@@ -29,6 +29,10 @@ export const Header = ({ isAuth, user, logout }: HeaderProps) => {
         open('login');
     };
 
+    const openSignUpModal = () => {
+        open('signup');
+    };
+
     useEffect(() => {
         const showAt = 88;
         const hideAt = 40;
@@ -72,7 +76,7 @@ export const Header = ({ isAuth, user, logout }: HeaderProps) => {
                         ) : (
                             <div className={styles.btnGroup}>
                                 <Button onClick={openLoginModal}>Sign In</Button>
-                                <Button as={Link} variant="secondary" href="/login">
+                                <Button onClick={openSignUpModal} variant="secondary">
                                     Sign Up
                                 </Button>
                             </div>

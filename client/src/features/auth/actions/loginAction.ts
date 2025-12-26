@@ -32,9 +32,9 @@ export const loginAction = async (
         headers: { 'Content-Type': 'application/json' },
     });
 
-    if (result.status !== 200) {
+    if (!result.ok) {
         return {
-            error: 'Invalid login or password',
+            error: 'Invalid credentials',
             redirectTo: '',
             fieldErrors: {},
             formErrors: [],

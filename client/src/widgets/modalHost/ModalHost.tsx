@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 
 import { useModalStore } from '@/shared/store/modalStore';
 import { LoginModal } from '@/widgets/modals/loginModal/LoginModal';
+import { SignUpModal } from '@/widgets/modals/signUpModal/SignUpModal';
 
 import styles from './hostModal.module.scss';
 
@@ -35,6 +36,7 @@ export const ModalHost = () => {
         >
             <div className={styles.contentWrap} key={activeModal}>
                 {activeModal === 'login' && <LoginModal open={opened} onClose={close} />}
+                {activeModal === 'signup' && <SignUpModal open={opened} onClose={close} />}
             </div>
         </div>,
         document.body,

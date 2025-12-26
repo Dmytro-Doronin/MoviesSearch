@@ -3,13 +3,13 @@
 import { FocusEventHandler, useActionState, useEffect, useState } from 'react';
 import { z } from 'zod';
 
-import { loginAction } from '@/features/auth/actions/loginAction';
+import { signUpAction } from '@/features/auth/actions/signUpAction';
 import {
-    LoginActionState,
-    LoginClientErrors,
-    LoginInput,
-    loginSchema,
-} from '@/features/auth/schemas/loginSchema';
+    SignUpActionState,
+    SignUpClientErrors,
+    SignUpInput,
+    signUpSchema,
+} from '@/features/auth/schemas/signUpSchema';
 import { useEnter } from '@/hooks/useEnter';
 import { useModalStore } from '@/shared/store/modalStore';
 import { Button } from '@/shared/ui/button/Button';
@@ -18,28 +18,32 @@ import { TextField } from '@/shared/ui/textField/TextField';
 import { Typography } from '@/shared/ui/typography/Typography';
 import { FormCard } from '@/widgets/formCard/FormCard';
 
-import styles from './loginModal.module.scss';
+import styles from './signUpModal.module.scss';
 
-type LoginModal = {
+type SignUpModal = {
     open?: boolean;
     onClose?: () => void;
     className?: string;
 };
-export const LoginModal = ({ onClose, className, open }: LoginModal) => {
+export const SignUpModal = ({ onClose, className, open }: SignUpModal) => {
     const enter = useEnter(open);
-    const [state, formAction, isPending] = useActionState<LoginActionState, FormData>(loginAction, {
-        error: '',
-        redirectTo: '',
-        fieldErrors: {},
-        formErrors: [],
-    });
+
+    const [state, formAction, isPending] = useActionState<SignUpActionState, FormData>(
+        signUpAction,
+        {
+            error: '',
+            redirectTo: '',
+            fieldErrors: {},
+            formErrors: [],
+        },
+    );
 
     const openModal = useModalStore((s) => s.open);
 
     const { error, redirectTo, fieldErrors } = state;
-    const [values, setValues] = useState<LoginInput>({ email: '', password: '' });
-    const [touched, setTouched] = useState<Partial<Record<keyof LoginInput, boolean>>>({});
-    const [clientErrors, setClientErrors] = useState<LoginClientErrors>({});
+    const [values, setValues] = useState<SignUpInput>({ email: '', password: '', login: '' });
+    const [touched, setTouched] = useState<Partial<Record<keyof SignUpInput, boolean>>>({});
+    const [clientErrors, setClientErrors] = useState<SignUpClientErrors>({});
 
     useEffect(() => {
         if (redirectTo) {
@@ -47,8 +51,8 @@ export const LoginModal = ({ onClose, className, open }: LoginModal) => {
         }
     }, [redirectTo]);
 
-    const validateField = (name: keyof LoginInput) => {
-        const result = loginSchema.safeParse(values);
+    const validateField = (name: keyof SignUpInput) => {
+        const result = signUpSchema.safeParse(values);
         if (result.success) {
             return setClientErrors((p) => ({ ...p, [name]: undefined }));
         }
@@ -57,28 +61,38 @@ export const LoginModal = ({ onClose, className, open }: LoginModal) => {
     };
 
     const onBlur =
-        (field: keyof LoginInput): FocusEventHandler<HTMLInputElement> =>
+        (field: keyof SignUpInput): FocusEventHandler<HTMLInputElement> =>
         () => {
             setTouched((p) => ({ ...p, [field]: true }));
             validateField(field);
         };
 
-    const openSignUpModal = () => {
-        onClose?.();
-        openModal('signup');
-    };
-
     const emailError = (touched.email && clientErrors.email) || fieldErrors.email?.[0];
+    const loginError = (touched.login && clientErrors.login) || fieldErrors.login?.[0];
     const passwordError = (touched.password && clientErrors.password) || fieldErrors.password?.[0];
+
+    const openLoginModal = () => {
+        onClose?.();
+        openModal('login');
+    };
 
     return (
         <FormCard
             onClose={onClose}
-            title="Login in"
+            title="Sign Up"
             className={`${styles.modalContent} ${className} ${enter ? styles.enter : ''}`}
         >
             <form action={formAction}>
                 <div className={styles.inputGroup}>
+                    <TextField
+                        name="login"
+                        type="text"
+                        placeholder="Login"
+                        onChange={(e) => setValues((p) => ({ ...p, login: e.target.value }))}
+                        onBlur={onBlur('login')}
+                        errorMessage={loginError}
+                    />
+
                     <TextField
                         name="email"
                         type="text"
@@ -99,15 +113,15 @@ export const LoginModal = ({ onClose, className, open }: LoginModal) => {
                 </div>
                 <div className={styles.infoGroup}>
                     <Button disabled={isPending} type="submit">
-                        <Typography variant="body1">Log in</Typography>
+                        <Typography variant="body1">SignUp</Typography>
                     </Button>
                     <Button
-                        onClick={openSignUpModal}
+                        onClick={openLoginModal}
                         disabled={isPending}
                         variant="secondary"
                         type="button"
                     >
-                        <Typography variant="body1">Sign up</Typography>
+                        <Typography variant="body1">Try to Log in</Typography>
                     </Button>
                 </div>
                 {error && <div>{error}</div>}
