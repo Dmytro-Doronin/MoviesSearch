@@ -2,14 +2,14 @@ import { cookies } from 'next/headers';
 
 import { User } from '@/features/auth/model/types';
 
-export const getUsers = async () => {
+export const getMe = async () => {
     const cookiesStore = await cookies();
+    const accessToken = cookiesStore.get('accessToken')?.value;
 
     const result = await fetch('http://localhost:3000/auth/me', {
         credentials: 'include',
-        headers: {
-            Cookie: cookiesStore.toString(),
-        },
+        cache: 'no-store',
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
     });
 
     if (result.status === 401) {
@@ -19,8 +19,6 @@ export const getUsers = async () => {
     if (!result.ok) {
         return { isError: true, data: undefined };
     }
-
     const data: { user: User } = await result.json();
-
-    return { isError: true, data: data.user };
+    return { isError: false, data: data.user };
 };

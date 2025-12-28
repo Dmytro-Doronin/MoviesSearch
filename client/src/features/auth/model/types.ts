@@ -13,7 +13,7 @@ export type UserType = {
     id: string;
     login: string;
     email: string;
-    imageUrl: string;
+    imageUrl: string | null;
 };
 
 export type User = {

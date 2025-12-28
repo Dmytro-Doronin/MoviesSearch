@@ -1,7 +1,18 @@
 import { ReactNode } from 'react';
 
+import { PublicLayoutClient } from '@/app/(public)/PublicLayoutClient';
+import { getMe } from '@/features/auth/model/authApi';
+
 import styles from './layout.module.scss';
 
-export default function PublicLayout({ children }: { children: ReactNode }) {
-    return <div className={styles.authLayout}>{children}</div>;
-}
+const PublicLayout = async ({ children }: { children: ReactNode }) => {
+    const { data } = await getMe();
+    return (
+        <div className={styles.authLayout}>
+            <PublicLayoutClient user={data ?? null} />
+            {children}
+        </div>
+    );
+};
+
+export default PublicLayout;
