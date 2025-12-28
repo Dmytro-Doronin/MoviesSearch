@@ -19,6 +19,7 @@ type HeaderProps = {
     isAuth: boolean;
     user: UserType | null;
     logout: () => Promise<void>;
+    loading: boolean;
 };
 
 export const Header = ({ isAuth, user, logout }: HeaderProps) => {

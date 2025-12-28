@@ -5,7 +5,6 @@ import { User } from '@/features/auth/model/types';
 export const getMe = async () => {
     const cookiesStore = await cookies();
     const accessToken = cookiesStore.get('accessToken')?.value;
-
     const result = await fetch('http://localhost:3000/auth/me', {
         credentials: 'include',
         cache: 'no-store',
@@ -19,6 +18,6 @@ export const getMe = async () => {
     if (!result.ok) {
         return { isError: true, data: undefined };
     }
-    const data: { user: User } = await result.json();
-    return { isError: false, data: data.user };
+    const data: User = await result.json();
+    return { isError: false, data };
 };
