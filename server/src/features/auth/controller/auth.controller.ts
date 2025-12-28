@@ -63,7 +63,11 @@ export class AuthController {
             sameSite: 'none',
         });
 
-        return { accessToken };
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+        });
     }
 
     @UseGuards(JwtAuthGuard)
