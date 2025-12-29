@@ -6,7 +6,12 @@ import { AppModule } from '../app.module';
 import { FieldError } from '../types/settings.type';
 export const mainAppSettings = (app: INestApplication) => {
     app.use(cookieParser());
-
+    app.enableCors({
+        origin: ['http://localhost:3000', 'http://localhost:3001'],
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+    });
     useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
     app.useGlobalPipes(
