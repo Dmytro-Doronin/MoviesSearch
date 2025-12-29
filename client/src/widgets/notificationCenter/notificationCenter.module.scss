@@ -22,11 +22,11 @@
 }
 
 .success {
-    background-color: var(--color-success-500);
+    background-color: var(--color-success-200);
 }
 
 .error {
-    background-color: var(--color-danger-500);
+    background-color: var(--color-accent);
 }
 
 @keyframes fadeOut {
