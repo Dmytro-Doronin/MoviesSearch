@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { forwardSetCookies, safeJson } from '@/utils/apiUtils';
+
 const NEST_API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
 
 export async function GET(req: NextRequest) {
@@ -19,26 +21,4 @@ export async function GET(req: NextRequest) {
     forwardSetCookies(nestRes, res);
 
     return res;
-}
-
-async function safeJson(r: Response) {
-    try {
-        return await r.json();
-    } catch {
-        return null;
-    }
-}
-
-function forwardSetCookies(from: Response, to: NextResponse) {
-    const anyHeaders = from.headers as unknown as { getSetCookie?: () => string[] };
-    const setCookies = anyHeaders.getSetCookie?.() ?? [];
-
-    for (const c of setCookies) {
-        to.headers.append('set-cookie', c);
-    }
-
-    const sc = from.headers.get('set-cookie');
-    if (sc) {
-        to.headers.append('set-cookie', sc);
-    }
 }
