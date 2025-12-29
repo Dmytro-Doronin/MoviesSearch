@@ -23,10 +23,8 @@ export function useLogout() {
             success('Logged out');
             await queryClient.cancelQueries();
             queryClient.clear();
-
-            router.refresh();
-
             router.push('/');
+            router.refresh();
         },
 
         onError: (err) => {

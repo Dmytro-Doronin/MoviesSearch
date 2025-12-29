@@ -1,0 +1,102 @@
+@use '../../shared/config/styles/helpers' as *;
+
+.headerPrimary {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: var(--header-height);
+    background-color: hsl(var(--color-default-100) / 1);
+    border-bottom: rem(1) solid hsl(var(--color-default-300) / 1);
+    opacity: 1;
+}
+
+.innerPrimary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+}
+
+.userBlock {
+    display: flex;
+    align-items: center;
+    gap: rem(20);
+}
+
+.btnGroup {
+    display: flex;
+    column-gap: rem(10);
+}
+
+.headerSecondary {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    margin: 0 auto;
+
+    max-width: rem(1000);
+
+    border: rem(1) solid hsl(var(--color-default) / 1);
+    height: rem(60);
+    border-radius: rem(40);
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 rem(30);
+
+    margin-top: rem(30);
+    z-index: 10001;
+
+    background-color: color-mix(in oklab, hsl(var(--color-secondary) / 1) 5%, transparent);
+    backdrop-filter: blur(rem(10));
+    -webkit-backdrop-filter: blur(rem(10));
+    transform-origin: center;
+    will-change: transform;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.innerSecondary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.headerSecondaryButtons:hover {
+    background-color: hsl(var(--color-primary) / 1);
+    color: hsl(var(--color-primary-foreground) / 1);
+}
+
+.visible {
+    opacity: 1;
+    visibility: visible;
+    animation: squeezeX 0.3s ease-in-out;
+}
+
+.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+@keyframes squeezeX {
+    0% {
+        transform: scaleX(0.1);
+    }
+    25% {
+        transform: scaleX(0.3);
+    }
+    50% {
+        transform: scaleX(0.5);
+    }
+    75% {
+        transform: scaleX(0.8);
+    }
+    100% {
+        transform: scaleX(1);
+    }
+}

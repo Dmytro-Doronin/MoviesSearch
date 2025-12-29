@@ -5,7 +5,7 @@ import { User } from '@/features/auth/model/types';
 export const getMe = async () => {
     const cookiesStore = await cookies();
     const accessToken = cookiesStore.get('accessToken')?.value;
-    const result = await fetch('http://localhost:3000/auth/me', {
+    const result = await fetch('http://localhost:3001/api/auth/me', {
         credentials: 'include',
         cache: 'no-store',
         headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},

@@ -12,6 +12,7 @@ import {
     UnauthorizedException,
     NotFoundException,
     Get,
+    Delete,
 } from '@nestjs/common';
 
 import type { AccessUserPayload, LocalUserPayload, RefreshUserPayload } from '../types/auth.types';
@@ -71,7 +72,7 @@ export class AuthController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Post('/logout')
+    @Delete('/logout')
     async logout(@Request() req: AccessUserPayload, @Res() res: Response) {
         await this.authService.logout(req.user.userId);
         res.clearCookie('refreshToken');
