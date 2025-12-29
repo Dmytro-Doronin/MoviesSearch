@@ -79,6 +79,7 @@ export class AuthController {
         res.sendStatus(204);
     }
 
+    @HttpCode(200)
     @UseGuards(VerifyRefreshTokenGuard)
     @Post('/refresh-token')
     async refresh(@Request() req: RefreshUserPayload, @Res() res: Response) {
@@ -90,13 +91,17 @@ export class AuthController {
             refreshToken,
         );
 
-        res.cookie('refreshToken', newToken, {
+        res.cookie('accessToken', accessToken, {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
         });
 
-        res.status(200).json({ accessToken });
+        res.cookie('refreshToken', newToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+        });
     }
 
     @UseGuards(JwtAuthGuard)
