@@ -2,9 +2,11 @@ import type { Metadata } from 'next';
 
 import { ReactNode } from 'react';
 
-import { HeaderWrapper } from '@/widgets/headerWrapper/HeaderWrapper';
+import { Providers } from '@/app/providers';
 import '@/shared/config/styles/index.scss';
+import { HeaderWrapper } from '@/widgets/headerWrapper/HeaderWrapper';
 import { ModalHost } from '@/widgets/modalHost/ModalHost';
+import { NotificationCenter } from '@/widgets/notificationCenter/NotificationCenter';
 
 import styles from './layout.module.scss';
 
@@ -17,9 +19,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <html lang="en">
             <body className={styles.root}>
-                <HeaderWrapper />
-                <main className={styles.main}>{children}</main>
-                <ModalHost />
+                <Providers>
+                    <HeaderWrapper />
+                    <main className={styles.main}>{children}</main>
+                    <ModalHost />
+                    <NotificationCenter />
+                </Providers>
             </body>
         </html>
     );
