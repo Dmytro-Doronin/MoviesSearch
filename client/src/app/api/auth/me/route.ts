@@ -1,24 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { forwardSetCookies, safeJson } from '@/utils/apiUtils';
+import { fetchNestWithRefresh } from '@/shared/api/fetchWithAuthRefresh';
+import { safeJson } from '@/utils/apiUtils';
 
-const NEST_API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
+export const runtime = 'nodejs';
 
 export async function GET(req: NextRequest) {
-    const nestRes = await fetch(`${NEST_API}/auth/me`, {
+    const { nestRes, setCookiesToForward } = await fetchNestWithRefresh(req, '/auth/me', {
         method: 'GET',
-        headers: {
-            cookie: req.headers.get('cookie') ?? '',
-            authorization: req.headers.get('authorization') ?? '',
-        },
-        cache: 'no-store',
     });
 
     const body = await safeJson(nestRes);
-
     const res = NextResponse.json(body, { status: nestRes.status });
 
-    forwardSetCookies(nestRes, res);
+    for (const sc of setCookiesToForward) {
+        res.headers.append('set-cookie', sc);
+    }
 
     return res;
 }

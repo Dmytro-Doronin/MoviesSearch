@@ -6,7 +6,7 @@ const NEST_API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
 
 export async function POST(req: NextRequest) {
     const nestRes = await fetch(`${NEST_API}/auth/logout`, {
-        method: 'POST',
+        method: 'DELETE',
         headers: {
             cookie: req.headers.get('cookie') ?? '',
             'content-type': 'application/json',

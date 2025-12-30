@@ -1,20 +1,40 @@
-'use server';
+'use client';
+
+import { useEffect, useState } from 'react';
+
+import type { User } from '@/features/auth/model/types';
 
 import NoAvatar from '@/assets/no-avatar.jpeg';
-import { getMe } from '@/features/auth/model/authApi';
+import { http } from '@/shared/api/http';
 import { Button } from '@/shared/ui/button/Button';
 import Sun from '@/shared/ui/icons/Sun';
 import UserIcon from '@/shared/ui/icons/User';
 import { CardImage } from '@/shared/ui/image/Image';
 import { Logo } from '@/shared/ui/logo/Logo';
-import { HeaderActionsClient } from '@/widgets/headerServer/HeaderActionsClient';
+import { HeaderActionsClient } from '@/widgets/headerClient/HeaderActionsClient';
 
 import styles from './header.module.scss';
 import { HeaderScrollClient } from './HeaderScrollClient';
 
-export const HeaderServer = async () => {
-    const { data: user } = await getMe();
+export function HeaderClient() {
+    const [user, setUser] = useState<User | null>(null);
     const isAuth = !!user;
+
+    useEffect(() => {
+        let cancelled = false;
+
+        http.get('/api/auth/me')
+            .then((res) => {
+                if (!cancelled) setUser(res.data);
+            })
+            .catch(() => {
+                if (!cancelled) setUser(null);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     return (
         <>
@@ -27,14 +47,6 @@ export const HeaderServer = async () => {
                             <div className={styles.userBlock}>
                                 <CardImage src={user?.imageUrl ?? NoAvatar} variant="tiny" />
                                 <span>{user?.login}</span>
-
-                                {/*<Link*/}
-                                {/*    href={pathVariables.ADMIN}*/}
-                                {/*    className={`${styles.adminLink} ${styles.secondaryBtn}`}*/}
-                                {/*>*/}
-                                {/*    Admin*/}
-                                {/*</Link>*/}
-
                                 <HeaderActionsClient isAuth user={user} />
                             </div>
                         ) : (
@@ -65,4 +77,4 @@ export const HeaderServer = async () => {
             <HeaderScrollClient />
         </>
     );
-};
+}

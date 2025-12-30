@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 
 import { Providers } from '@/app/providers';
 import '@/shared/config/styles/index.scss';
-import { HeaderServer } from '@/widgets/headerServer/HeaderServer';
+import { HeaderClient } from '@/widgets/headerClient/HeaderClient';
 import { ModalHost } from '@/widgets/modalHost/ModalHost';
 import { NotificationCenter } from '@/widgets/notificationCenter/NotificationCenter';
 
@@ -20,7 +20,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <html lang="en">
             <body className={styles.root}>
                 <Providers>
-                    <HeaderServer />
+                    <HeaderClient />
                     <main className={styles.main}>{children}</main>
                     <ModalHost />
                     <NotificationCenter />

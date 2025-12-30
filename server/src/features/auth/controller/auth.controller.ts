@@ -83,7 +83,7 @@ export class AuthController {
     @HttpCode(200)
     @UseGuards(VerifyRefreshTokenGuard)
     @Post('/refresh-token')
-    async refresh(@Request() req: RefreshUserPayload, @Res() res: Response) {
+    async refresh(@Request() req: RefreshUserPayload, @Res({ passthrough: true }) res: Response) {
         const refreshToken = req.user.refreshToken;
         const userId = req.user.id;
 
@@ -94,15 +94,19 @@ export class AuthController {
 
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            secure: false,
+            sameSite: 'lax',
+            path: '/',
         });
 
         res.cookie('refreshToken', newToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            secure: false,
+            sameSite: 'lax',
+            path: '/',
         });
+
+        return { ok: true };
     }
 
     @UseGuards(JwtAuthGuard)
