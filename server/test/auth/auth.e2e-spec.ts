@@ -15,6 +15,8 @@ function getCookiesArray(res: request.Response): string[] {
     return Array.isArray(raw) ? raw : [raw];
 }
 
+const cookiePair = (setCookie: string) => setCookie.split(';')[0];
+
 describe('AuthController (e2e) - registration', () => {
     let app: INestApplication;
     let prisma: PrismaService;
@@ -95,19 +97,19 @@ describe('AuthController (e2e) - registration', () => {
             })
             .expect(200);
 
-        expect(res.body).toHaveProperty('accessToken');
-        expect(typeof res.body.accessToken).toBe('string');
-
-        const cookies = getCookiesArray(res);
-
+        const cookies: string[] = getCookiesArray(res);
         expect(cookies.length).toBeGreaterThan(0);
 
-        const refreshCookie = cookies.find((cookie) => cookie.startsWith('refreshToken='));
+        const refresh = cookies.find((c: string) => c.startsWith('refreshToken='));
+        expect(refresh).toBeDefined();
+        expect(refresh!).toMatch(/^refreshToken=.+;/);
+        expect(refresh!).toContain('HttpOnly');
+        expect(refresh!).toContain('Secure');
+        expect(refresh!).toContain('SameSite=None');
 
-        expect(refreshCookie).toBeDefined();
-        expect(refreshCookie).toContain('HttpOnly');
-        expect(refreshCookie).toContain('Secure');
-        expect(refreshCookie).toContain('SameSite=None');
+        const access = cookies.find((c: string) => c.startsWith('accessToken='));
+        expect(access).toBeDefined();
+        expect(access!).toMatch(/^accessToken=.+;/);
 
         const userInDb = await prisma.user.findUnique({
             where: { email: payload.email },
@@ -160,49 +162,43 @@ describe('AuthController (e2e) - registration', () => {
 
         const loginRes = await request(app.getHttpServer())
             .post('/auth/login')
-            .send({
-                email: payload.email,
-                password: payload.password,
-            })
+            .send({ email: payload.email, password: payload.password })
             .expect(200);
 
         const loginCookies = getCookiesArray(loginRes);
-        const refreshCookie = loginCookies.find((cookie) => cookie.startsWith('refreshToken='));
 
-        expect(refreshCookie).toBeDefined();
-        const refreshCookieValue = refreshCookie as string;
+        const refreshSetCookie = loginCookies.find((c) => c.startsWith('refreshToken='));
+        expect(refreshSetCookie).toBeDefined();
 
-        const userInDb = await prisma.user.findUnique({
-            where: { email: payload.email },
-        });
+        const refreshPair = cookiePair(refreshSetCookie!);
+
+        const userInDb = await prisma.user.findUnique({ where: { email: payload.email } });
         expect(userInDb).toBeDefined();
 
         const tokenBefore = await prisma.refreshToken.findUnique({
             where: { userId: userInDb!.id },
         });
-
         expect(tokenBefore).toBeDefined();
         const oldTokenValue = tokenBefore!.token;
 
         const refreshRes = await request(app.getHttpServer())
             .post('/auth/refresh-token')
-            .set('Cookie', refreshCookieValue)
+            .set('Cookie', refreshPair)
             .expect(200);
 
-        expect(refreshRes.body).toHaveProperty('accessToken');
-        expect(typeof refreshRes.body.accessToken).toBe('string');
-
         const refreshCookies = getCookiesArray(refreshRes);
-        const newRefreshCookie = refreshCookies.find((cookie) =>
-            cookie.startsWith('refreshToken='),
-        );
 
-        expect(newRefreshCookie).toBeDefined();
+        const newRefreshSetCookie = refreshCookies.find((c) => c.startsWith('refreshToken='));
+        expect(newRefreshSetCookie).toBeDefined();
+        expect(newRefreshSetCookie!).toMatch(/^refreshToken=.+;/);
+
+        const newAccessSetCookie = refreshCookies.find((c) => c.startsWith('accessToken='));
+        expect(newAccessSetCookie).toBeDefined();
+        expect(newAccessSetCookie!).toMatch(/^accessToken=.+;/);
 
         const tokenAfter = await prisma.refreshToken.findUnique({
             where: { userId: userInDb!.id },
         });
-
         expect(tokenAfter).toBeDefined();
         expect(tokenAfter!.token).not.toBe(oldTokenValue);
     });
@@ -225,22 +221,21 @@ describe('AuthController (e2e) - registration', () => {
 
         const loginRes = await request(app.getHttpServer())
             .post('/auth/login')
-            .send({
-                email: payload.email,
-                password: payload.password,
-            })
+            .send({ email: payload.email, password: payload.password })
             .expect(200);
 
-        const accessToken = loginRes.body.accessToken;
-        expect(typeof accessToken).toBe('string');
-
         const loginCookies = getCookiesArray(loginRes);
-        const refreshCookie = loginCookies.find((cookie) => cookie.startsWith('refreshToken='));
-        expect(refreshCookie).toBeDefined();
+        const accessSetCookie = loginCookies.find((c) => c.startsWith('accessToken='));
+        const refreshSetCookie = loginCookies.find((c) => c.startsWith('refreshToken='));
 
-        const userInDb = await prisma.user.findUnique({
-            where: { email: payload.email },
-        });
+        expect(accessSetCookie).toBeDefined();
+        expect(refreshSetCookie).toBeDefined();
+
+        const cookieHeader = [cookiePair(accessSetCookie!), cookiePair(refreshSetCookie!)].join(
+            '; ',
+        );
+
+        const userInDb = await prisma.user.findUnique({ where: { email: payload.email } });
         expect(userInDb).toBeDefined();
 
         const tokenBefore = await prisma.refreshToken.findUnique({
@@ -249,8 +244,8 @@ describe('AuthController (e2e) - registration', () => {
         expect(tokenBefore).toBeDefined();
 
         const logoutRes = await request(app.getHttpServer())
-            .post('/auth/logout')
-            .set('Authorization', `Bearer ${accessToken}`)
+            .delete('/auth/logout')
+            .set('Cookie', cookieHeader)
             .expect(204);
 
         const tokenAfter = await prisma.refreshToken.findUnique({
@@ -259,9 +254,8 @@ describe('AuthController (e2e) - registration', () => {
         expect(tokenAfter).toBeNull();
 
         const logoutCookies = getCookiesArray(logoutRes);
-        const clearedCookie = logoutCookies.find((cookie) => cookie.startsWith('refreshToken='));
-
-        expect(clearedCookie).toBeDefined();
+        const clearedRefresh = logoutCookies.find((c) => c.startsWith('refreshToken='));
+        expect(clearedRefresh).toBeDefined();
     });
 
     it('should return 401 when trying to refresh with old refreshToken after logout', async () => {
@@ -275,33 +269,35 @@ describe('AuthController (e2e) - registration', () => {
 
         const loginRes = await request(app.getHttpServer())
             .post('/auth/login')
-            .send({
-                email: payload.email,
-                password: payload.password,
-            })
+            .send({ email: payload.email, password: payload.password })
             .expect(200);
 
-        const accessToken = loginRes.body.accessToken;
         const loginCookies = getCookiesArray(loginRes);
-        const refreshCookie = loginCookies.find((cookie) => cookie.startsWith('refreshToken='));
-        expect(refreshCookie).toBeDefined();
-        const refreshCookieValue = refreshCookie as string;
+        const accessSetCookie = loginCookies.find((c) => c.startsWith('accessToken='));
+        const refreshSetCookie = loginCookies.find((c) => c.startsWith('refreshToken='));
+        expect(accessSetCookie).toBeDefined();
+        expect(refreshSetCookie).toBeDefined();
 
+        const cookieHeader = [cookiePair(accessSetCookie!), cookiePair(refreshSetCookie!)].join(
+            '; ',
+        );
+
+        // logout
         await request(app.getHttpServer())
-            .post('/auth/logout')
-            .set('Authorization', `Bearer ${accessToken}`)
+            .delete('/auth/logout')
+            .set('Cookie', cookieHeader)
             .expect(204);
 
-        const refreshRes = await request(app.getHttpServer())
-            .post('/auth/refresh-token')
-            .set('Cookie', refreshCookieValue)
-            .expect(401);
+        const oldRefreshPair = cookiePair(refreshSetCookie!);
 
-        expect(refreshRes.body.statusCode).toBe(401);
+        await request(app.getHttpServer())
+            .post('/auth/refresh-token')
+            .set('Cookie', oldRefreshPair)
+            .expect(401);
     });
 
     //me
-    it('should return current user data for /auth/me with valid accessToken', async () => {
+    it('should return current user data for /auth/me with valid accessToken cookie', async () => {
         const payload = {
             login: 'meUser',
             email: 'me@test.com',
@@ -312,23 +308,19 @@ describe('AuthController (e2e) - registration', () => {
 
         const loginRes = await request(app.getHttpServer())
             .post('/auth/login')
-            .send({
-                email: payload.email,
-                password: payload.password,
-            })
+            .send({ email: payload.email, password: payload.password })
             .expect(200);
 
-        const accessToken = loginRes.body.accessToken;
-        expect(typeof accessToken).toBe('string');
+        const loginCookies = getCookiesArray(loginRes);
+        const accessSetCookie = loginCookies.find((c) => c.startsWith('accessToken='));
+        expect(accessSetCookie).toBeDefined();
 
-        const userInDb = await prisma.user.findUnique({
-            where: { email: payload.email },
-        });
+        const userInDb = await prisma.user.findUnique({ where: { email: payload.email } });
         expect(userInDb).toBeDefined();
 
         const meRes = await request(app.getHttpServer())
             .get('/auth/me')
-            .set('Authorization', `Bearer ${accessToken}`)
+            .set('Cookie', cookiePair(accessSetCookie!))
             .expect(200);
 
         expect(meRes.body).toEqual({

@@ -62,12 +62,14 @@ export class AuthController {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
+            path: '/',
         });
 
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
+            path: '/',
         });
     }
 
@@ -94,19 +96,17 @@ export class AuthController {
 
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            secure: false,
-            sameSite: 'lax',
+            secure: true,
+            sameSite: 'none',
             path: '/',
         });
 
         res.cookie('refreshToken', newToken, {
             httpOnly: true,
-            secure: false,
-            sameSite: 'lax',
+            secure: true,
+            sameSite: 'none',
             path: '/',
         });
-
-        return { ok: true };
     }
 
     @UseGuards(JwtAuthGuard)
